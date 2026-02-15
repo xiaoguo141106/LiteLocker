@@ -14,7 +14,7 @@
 ---
 
 ### 🔗 快速链接
-[ [项目首页](https://litelocker.streamlit.app/) |  [QQ群:](#) | [灵感来源: FileCodeBox](https://github.com/vastsa/FileCodeBox) ]
+[ [项目演示](https://litelocker.streamlit.app/) |  [QQ群:](#) | [灵感来源: FileCodeBox](https://github.com/vastsa/FileCodeBox) ]
 
 ## 🚀 部署指南
 
