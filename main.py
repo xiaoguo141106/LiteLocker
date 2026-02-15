@@ -211,4 +211,4 @@ with tab2:
             st.error("请先上传文件或输入文本内容")
 # --- 页脚数据统计 ---
 st.divider()
-st.caption("LiteLocker v2.0 | 安全 · 私密 · 阅后即焚")
+st.caption("LiteLocker v1.0.0 | 安全 · 私密 · 高效")
