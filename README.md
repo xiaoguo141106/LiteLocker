@@ -28,7 +28,7 @@ docker run -d \
   -v /你的本地路径/data:/app/parcel_locker \
   --restart always \
   your-docker-username/litelocker:latest
-
+```
 ## ✨ 功能特性
 - **两页设计**：独立的“存入”与“提取”页面，逻辑清晰。
 - **多类型支持**：支持各类文件上传及纯文本寄存。
