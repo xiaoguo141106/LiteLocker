@@ -9,7 +9,6 @@
 ![License](https://img.shields.io/badge/license-GPL--3.0-orange?style=flat-square)
 
 ![Python](https://img.shields.io/badge/Python-3.9+-blue?style=flat-square&logo=python)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.20+-FF4B4B?style=flat-square&logo=streamlit)
 
 ---
 
