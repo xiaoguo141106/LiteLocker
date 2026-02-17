@@ -42,6 +42,6 @@ This project is licensed under [GPL-3.0](https://www.google.com/search?q=LICENSE
 
 ## Credits
 
-This project was inspired by the open-source project [FileCodeBox](https://github.com/vastsa/FileCodeBox).
-Special thanks to the original author [vastsa](https://github.com/vastsa) for the excellent product concepts.
-This project is a lightweight re-implementation based on Streamlit.
+This project is a lightweight re-implementation inspired by [FileCodeBox](https://github.com/vastsa/FileCodeBox).
+- **Original Author**: [vastsa](https://github.com/vastsa)
+- **License**: This project is licensed under the GPL-3.0 License (derived from LGPL-3.0).
