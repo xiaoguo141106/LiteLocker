@@ -44,6 +44,6 @@ docker run -d \
 
 ## 致谢
 
-本项目是受 [FileCodeBox](https://github.com/vastsa/FileCodeBox) 启发而实现的轻量化重新实现。
+本项目是受 [FileCodeBox](https://github.com/vastsa/FileCodeBox) 启发而衍生出来的作品。
 - **原作者**: [vastsa](https://github.com/vastsa)
 - **开源协议**: 本项目采用 GPL-3.0 协议（衍生自 LGPL-3.0）。
