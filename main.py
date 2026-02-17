@@ -28,33 +28,38 @@ from core.settings import settings, BASE_DIR, DEFAULT_CONFIG
 from core.tasks import delete_expire_files, clean_incomplete_uploads
 from core.utils import hash_password, is_password_hashed
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("LiteLocker 引擎正在初始化...")
+    logger.info("正在初始化应用...")
+    # 初始化数据库
     await init_db()
+
+    # 加载配置（多进程下串行化启动写操作）
     async with db_startup_lock():
         await load_config()
-    
-    # --- UI 关键点 1: 资产路径挂载 ---
-    # 确保你的静态资源放在项目根目录下的 /assets 文件夹
     app.mount(
         "/assets",
         StaticFiles(directory=f"./{settings.themesSelect}/assets"),
         name="assets",
     )
 
+    # 启动后台任务
     task = asyncio.create_task(delete_expire_files())
     chunk_cleanup_task = asyncio.create_task(clean_incomplete_uploads())
-    logger.info("LiteLocker UI 加载完成")
+    logger.info("应用初始化完成")
 
     try:
         yield
     finally:
+        # 清理操作
         logger.info("正在关闭应用...")
         task.cancel()
         chunk_cleanup_task.cancel()
         await asyncio.gather(task, chunk_cleanup_task, return_exceptions=True)
         await Tortoise.close_connections()
+        logger.info("应用已关闭")
+
 
 async def load_config():
     await ensure_settings_row()
@@ -62,11 +67,14 @@ async def load_config():
         key="sys_start", defaults={"value": int(time.time() * 1000)}
     )
     await refresh_settings()
+
     await migrate_password_to_hash()
+
     ip_limit["error"].minutes = settings.errorMinute
     ip_limit["error"].count = settings.errorCount
     ip_limit["upload"].minutes = settings.uploadMinute
     ip_limit["upload"].count = settings.uploadCount
+
 
 async def migrate_password_to_hash():
     if not is_password_hashed(settings.admin_token):
@@ -76,7 +84,8 @@ async def migrate_password_to_hash():
         if config_record and config_record.value:
             config_record.value["admin_token"] = hashed
             await config_record.save()
-            logger.info("密码安全策略已同步")
+            logger.info("已将管理员密码迁移为哈希存储")
+
 
 app = FastAPI(lifespan=lifespan)
 
@@ -93,6 +102,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# 使用 register_tortoise 来添加异常处理器
 register_tortoise(
     app,
     config=get_db_config(),
@@ -100,41 +110,41 @@ register_tortoise(
     add_exception_handlers=True,
 )
 
-# 核心逻辑 API 全量保留，确保功能不崩
 app.include_router(share_api)
 app.include_router(chunk_api)
 app.include_router(presign_api)
 app.include_router(admin_api)
 
-# --- UI 关键点 2: 定制首页渲染 ---
+
 @app.exception_handler(404)
 @app.get("/")
 async def index(request=None, exc=None):
-    # 这里加载你定制的主题 index.html
-    theme_path = BASE_DIR / f"{settings.themesSelect}/index.html"
-    with open(theme_path, "r", encoding="utf-8") as f:
-        content = f.read()
-    
-    # 注入 LiteLocker 的定制内容
-    content = content.replace("{{title}}", "LiteLocker") \
-                     .replace("{{description}}", "轻量级文件快递柜") \
-                     .replace("{{keywords}}", "FileLocker, PrivateShare") \
-                     .replace("{{opacity}}", str(settings.opacity)) \
-                     .replace('"/assets/', '"assets/') \
-                     .replace("{{background}}", str(settings.background))
-    
-    return HTMLResponse(content=content, media_type="text/html", headers={"Cache-Control": "no-cache"})
+    return HTMLResponse(
+        content=open(
+            BASE_DIR / f"{settings.themesSelect}/index.html", "r", encoding="utf-8"
+        )
+        .read()
+        .replace("{{title}}", str(settings.name))
+        .replace("{{description}}", str(settings.description))
+        .replace("{{keywords}}", str(settings.keywords))
+        .replace("{{opacity}}", str(settings.opacity))
+        .replace('"/assets/', '"assets/')
+        .replace("{{background}}", str(settings.background)),
+        media_type="text/html",
+        headers={"Cache-Control": "no-cache"},
+    )
+
 
 @app.get("/robots.txt")
 async def robots():
     return HTMLResponse(content=settings.robotsText, media_type="text/plain")
 
-# 保持前端配置接口的原汁原味，防止 Vue 报错
+
 @app.post("/")
 async def get_config():
     return APIResponse(
         detail={
-            "name": "LiteLocker", 
+            "name": settings.name,
             "description": settings.description,
             "explain": settings.page_explain,
             "uploadSize": settings.uploadSize,
@@ -148,8 +158,10 @@ async def get_config():
         }
     )
 
+
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(
         app="main:app",
         host=settings.serverHost,
