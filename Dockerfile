@@ -1,3 +1,6 @@
+# Derived from FileCodeBox by vastsa (https://github.com/vastsa/FileCodeBox)
+# Modified by xiaoguo141106
+
 # 第一阶段：构建前端主题
 FROM node:20-alpine AS frontend-builder
 
