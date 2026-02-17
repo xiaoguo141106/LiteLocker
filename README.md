@@ -42,8 +42,8 @@ docker run -d \
 ## 🛡️ 开源协议
 本项目采用 [GPL-3.0](LICENSE) 协议。
 
-## 鸣谢
+## 致谢
 
-本项目灵感源自开源项目 [FileCodeBox](https://github.com/vastsa/FileCodeBox)。
-感谢原作者 [vastsa](https://github.com/vastsa) 提供的优秀产品思路。
-本项目基于 Streamlit 进行了轻量化重新实现。
+本项目是受 [FileCodeBox](https://github.com/vastsa/FileCodeBox) 启发而实现的轻量化重新实现。
+- **原作者**: [vastsa](https://github.com/vastsa)
+- **开源协议**: 本项目采用 GPL-3.0 协议（衍生自 LGPL-3.0）。
